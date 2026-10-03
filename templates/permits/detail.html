@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h2>
+        Permit {{ permit.permit_number }}
+    </h2>
+
+    <div>
+
+        {% if permit.status == "APPROVED" %}
+
+            <a
+                href="{% url 'permit_pdf' permit.pk %}"
+                class="btn btn-success"
+            >
+                Download PDF
+            </a>
+
+        {% endif %}
+
+        {% if user.role == "SAFETY" and permit.status == "SUBMITTED" or user.role == "SAFETY" and permit.status == "RESUBMITTED" %}
+
+            <a
+                href="{% url 'permit_review' permit.pk %}"
+                class="btn btn-warning"
+            >
+                Review Permit
+            </a>
+
+        {% endif %}
+
+        {% if permit.requester == user and permit.status == "REJECTED" %}
+
+            <a
+                href="{% url 'permit_edit' permit.pk %}"
+                class="btn btn-primary"
+            >
+                Edit & Resubmit
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+{% if permit.status == "REJECTED" %}
+
+<div class="alert alert-danger">
+
+    <strong>Permit Rejected</strong>
+
+    <br>
+
+    {{ permit.rejection_reason }}
+
+</div>
+
+{% endif %}
+
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header bg-primary text-white">
+        Permit Information
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Permit Number</strong>
+
+                <div>
+                    {{ permit.permit_number }}
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Permit Type</strong>
+
+                <div>
+                    {{ permit.permit_type.name }}
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Location</strong>
+
+                <div>
+                    {{ permit.location.name }}
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Requester</strong>
+
+                <div>
+                    {{ permit.requester }}
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Contractor</strong>
+
+                <div>
+                    {{ permit.contractor_name|default:"-" }}
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Status</strong>
+
+                <div>
+
+                    {% if permit.status == "APPROVED" %}
+
+                        <span class="badge bg-success">
+                            Approved
+                        </span>
+
+                    {% elif permit.status == "REJECTED" %}
+
+                        <span class="badge bg-danger">
+                            Rejected
+                        </span>
+
+                    {% elif permit.status == "SUBMITTED" or permit.status == "RESUBMITTED" %}
+
+                        <span class="badge bg-warning text-dark">
+                            Awaiting Safety Review
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-secondary">
+                            {{ permit.get_status_display }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Work Start</strong>
+
+                <div>
+                    {{ permit.work_start|date:"d-m-Y H:i" }}
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Work End</strong>
+
+                <div>
+                    {{ permit.work_end|date:"d-m-Y H:i" }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+        Work Details
+    </div>
+
+    <div class="card-body">
+
+        {{ permit.work_description|linebreaks }}
+
+    </div>
+
+</div>
+
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+        Workers
+    </div>
+
+    <div class="card-body">
+
+        {% if permit.workers %}
+
+            <pre class="mb-0">{{ permit.workers }}</pre>
+
+        {% else %}
+
+            <span class="text-muted">
+                No workers specified.
+            </span>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header bg-secondary text-white">
+        Required PPE
+    </div>
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+
+                <thead>
+                    <tr>
+                        <th>PPE</th>
+                        <th>Required</th>
+                        <th>Verified</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for item in permit.ppe_items.all %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.ppe.name }}
+                        </td>
+
+                        <td>
+
+                            {% if item.required %}
+                                <span class="badge bg-danger">
+                                    Required
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    Not Required
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if item.verified %}
+                                <span class="badge bg-success">
+                                    Verified
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    Not Verified
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ item.remarks|default:"-" }}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No PPE configured.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header bg-secondary text-white">
+        Safety Controls
+    </div>
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+
+                <thead>
+
+                    <tr>
+                        <th>Safety Control</th>
+                        <th>Required</th>
+                        <th>Verified</th>
+                        <th>Remarks</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for item in permit.safety_controls.all %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.safety_control.name }}
+                        </td>
+
+                        <td>
+
+                            {% if item.required %}
+                                <span class="badge bg-danger">
+                                    Required
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    Not Required
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if item.verified %}
+                                <span class="badge bg-success">
+                                    Verified
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    Not Verified
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ item.remarks|default:"-" }}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No safety controls configured.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% if permit.reviews.exists %}
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+        Review History
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-bordered">
+
+            <thead>
+
+                <tr>
+                    <th>Date</th>
+                    <th>Safety Officer</th>
+                    <th>Action</th>
+                    <th>Remarks</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for review in permit.reviews.all %}
+
+                <tr>
+
+                    <td>
+                        {{ review.created_at|date:"d-m-Y H:i" }}
+                    </td>
+
+                    <td>
+                        {{ review.safety_officer }}
+                    </td>
+
+                    <td>
+
+                        {% if review.action == "APPROVE" %}
+
+                            <span class="badge bg-success">
+                                Approved
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+                                Rejected
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ review.remarks|default:"-" }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

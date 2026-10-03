@@ -1,0 +1,1185 @@
+{#{% extends "base.html" %}#}
+{##}
+{#{% block content %}#}
+{##}
+{#<h2 class="mb-4">#}
+{#    Safety Review — {{ permit.permit_number }}#}
+{#</h2>#}
+{##}
+{##}
+{#<div class="alert alert-info">#}
+{##}
+{#    <strong>#}
+{#        {{ permit.permit_type.name }}#}
+{#    </strong>#}
+{##}
+{#    <br>#}
+{##}
+{#    Location:#}
+{#    {{ permit.location.name }}#}
+{##}
+{#    <br>#}
+{##}
+{#    Requester:#}
+{#    {{ permit.requester }}#}
+{##}
+{#</div>#}
+{##}
+{##}
+{#<!-- PPE -->#}
+{##}
+{#<div class="card shadow-sm mb-4">#}
+{##}
+{#    <div class="card-header bg-primary text-white">#}
+{#        PPE Verification#}
+{#    </div>#}
+{##}
+{#    <div class="card-body">#}
+{##}
+{#        {% for item in permit.ppe_items.all %}#}
+{##}
+{#        <form#}
+{#            method="post"#}
+{#            action="{% url 'verify_ppe' item.pk %}"#}
+{#            class="border-bottom py-3"#}
+{#        >#}
+{##}
+{#            {% csrf_token %}#}
+{##}
+{#            <div class="row align-items-center">#}
+{##}
+{#                <div class="col-md-4">#}
+{##}
+{#                    <strong>#}
+{#                        {{ item.ppe.name }}#}
+{#                    </strong>#}
+{##}
+{#                    {% if item.required %}#}
+{##}
+{#                        <span class="badge bg-danger ms-2">#}
+{#                            Required#}
+{#                        </span>#}
+{##}
+{#                    {% else %}#}
+{##}
+{#                        <span class="badge bg-secondary ms-2">#}
+{#                            Optional#}
+{#                        </span>#}
+{##}
+{#                    {% endif %}#}
+{##}
+{#                </div>#}
+{##}
+{#                <div class="col-md-2">#}
+{##}
+{#                    <select#}
+{#                        name="verified"#}
+{#                        class="form-select"#}
+{#                    >#}
+{##}
+{#                        <option#}
+{#                            value="false"#}
+{#                            {% if not item.verified %}selected{% endif %}#}
+{#                        >#}
+{#                            Not Verified#}
+{#                        </option>#}
+{##}
+{#                        <option#}
+{#                            value="true"#}
+{#                            {% if item.verified %}selected{% endif %}#}
+{#                        >#}
+{#                            Verified#}
+{#                        </option>#}
+{##}
+{#                    </select>#}
+{##}
+{#                </div>#}
+{##}
+{#                <div class="col-md-4">#}
+{##}
+{#                    <input#}
+{#                        type="text"#}
+{#                        name="remarks"#}
+{#                        value="{{ item.remarks }}"#}
+{#                        class="form-control"#}
+{#                        placeholder="Remarks"#}
+{#                    >#}
+{##}
+{#                </div>#}
+{##}
+{#                <div class="col-md-2">#}
+{##}
+{#                    <button#}
+{#                        type="submit"#}
+{#                        class="btn btn-outline-primary"#}
+{#                    >#}
+{#                        Save#}
+{#                    </button>#}
+{##}
+{#                </div>#}
+{##}
+{#            </div>#}
+{##}
+{#        </form>#}
+{##}
+{#        {% empty %}#}
+{##}
+{#            <p class="text-muted">#}
+{#                No PPE configured for this permit.#}
+{#            </p>#}
+{##}
+{#        {% endfor %}#}
+{##}
+{#    </div>#}
+{##}
+{#</div>#}
+{##}
+{##}
+{#<!-- Safety Controls -->#}
+{##}
+{#<div class="card shadow-sm mb-4">#}
+{##}
+{#    <div class="card-header bg-primary text-white">#}
+{#        Safety Control Verification#}
+{#    </div>#}
+{##}
+{#    <div class="card-body">#}
+{##}
+{#        {% for item in permit.safety_controls.all %}#}
+{##}
+{#        <form#}
+{#            method="post"#}
+{#            action="{% url 'verify_control' item.pk %}"#}
+{#            class="border-bottom py-3"#}
+{#        >#}
+{##}
+{#            {% csrf_token %}#}
+{##}
+{#            <div class="row align-items-center">#}
+{##}
+{#                <div class="col-md-4">#}
+{##}
+{#                    <strong>#}
+{#                        {{ item.safety_control.name }}#}
+{#                    </strong>#}
+{##}
+{#                    {% if item.required %}#}
+{##}
+{#                        <span class="badge bg-danger ms-2">#}
+{#                            Required#}
+{#                        </span>#}
+{##}
+{#                    {% else %}#}
+{##}
+{#                        <span class="badge bg-secondary ms-2">#}
+{#                            Optional#}
+{#                        </span>#}
+{##}
+{#                    {% endif %}#}
+{##}
+{#                </div>#}
+{##}
+{#                <div class="col-md-2">#}
+{##}
+{#                    <select#}
+{#                        name="verified"#}
+{#                        class="form-select"#}
+{#                    >#}
+{##}
+{#                        <option#}
+{#                            value="false"#}
+{#                            {% if not item.verified %}selected{% endif %}#}
+{#                        >#}
+{#                            Not Verified#}
+{#                        </option>#}
+{##}
+{#                        <option#}
+{#                            value="true"#}
+{#                            {% if item.verified %}selected{% endif %}#}
+{#                        >#}
+{#                            Verified#}
+{#                        </option>#}
+{##}
+{#                    </select>#}
+{##}
+{#                </div>#}
+{##}
+{#                <div class="col-md-4">#}
+{##}
+{#                    <input#}
+{#                        type="text"#}
+{#                        name="remarks"#}
+{#                        value="{{ item.remarks }}"#}
+{#                        class="form-control"#}
+{#                        placeholder="Remarks"#}
+{#                    >#}
+{##}
+{#                </div>#}
+{##}
+{#                <div class="col-md-2">#}
+{##}
+{#                    <button#}
+{#                        type="submit"#}
+{#                        class="btn btn-outline-primary"#}
+{#                    >#}
+{#                        Save#}
+{#                    </button>#}
+{##}
+{#                </div>#}
+{##}
+{#            </div>#}
+{##}
+{#        </form>#}
+{##}
+{#        {% empty %}#}
+{##}
+{#            <p class="text-muted">#}
+{#                No safety controls configured.#}
+{#            </p>#}
+{##}
+{#        {% endfor %}#}
+{##}
+{#    </div>#}
+{##}
+{#</div>#}
+{##}
+{##}
+{#<!-- Approval -->#}
+{##}
+{#<div class="card shadow-sm">#}
+{##}
+{#    <div class="card-header bg-dark text-white">#}
+{#        Final Decision#}
+{#    </div>#}
+{##}
+{#    <div class="card-body">#}
+{##}
+{#        <form method="post">#}
+{##}
+{#            {% csrf_token %}#}
+{##}
+{#            <div class="mb-3">#}
+{##}
+{#                <label class="form-label">#}
+{#                    Safety Officer Remarks#}
+{#                </label>#}
+{##}
+{#                {{ form.remarks }}#}
+{##}
+{#            </div>#}
+{##}
+{#            <div class="d-flex gap-2">#}
+{##}
+{#                <button#}
+{#                    type="submit"#}
+{#                    name="action"#}
+{#                    value="REJECT"#}
+{#                    class="btn btn-danger"#}
+{#                >#}
+{#                    Reject Permit#}
+{#                </button>#}
+{##}
+{#                <button#}
+{#                    type="submit"#}
+{#                    name="action"#}
+{#                    value="APPROVE"#}
+{#                    class="btn btn-success"#}
+{#                >#}
+{#                    Approve Permit#}
+{#                </button>#}
+{##}
+{#            </div>#}
+{##}
+{#        </form>#}
+{##}
+{#    </div>#}
+{##}
+{#</div>#}
+{##}
+{#{% endblock %}#}
+
+
+```html
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Safety Review — {{ permit.permit_number }}
+</h2>
+
+
+<div class="alert alert-info">
+
+    <strong>
+        {{ permit.permit_type.name }}
+    </strong>
+
+    <br>
+
+    Location:
+    {{ permit.location.name }}
+
+    <br>
+
+    Requester:
+    {{ permit.requester }}
+
+</div>
+
+
+<form
+    method="post"
+    id="review-form"
+>
+
+    {% csrf_token %}
+
+
+    <!-- ========================================== -->
+    <!-- VERIFY ALL -->
+    <!-- ========================================== -->
+
+    <div class="d-flex justify-content-end mb-3">
+
+        <button
+            type="button"
+            class="btn btn-outline-primary"
+            id="verify-all"
+        >
+            ✓ Verify All
+        </button>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- PPE -->
+    <!-- ========================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <span>
+                    PPE Verification
+                </span>
+
+                <span
+                    class="badge bg-light text-dark"
+                    id="ppe-progress"
+                >
+                    0 / 0 Verified
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% for item in permit.ppe_items.all %}
+
+            <div
+                class="verification-item border rounded p-3 mb-3"
+            >
+
+                <div class="row align-items-center">
+
+                    <!-- PPE NAME -->
+
+                    <div class="col-md-4">
+
+                        <strong>
+                            {{ item.ppe.name }}
+                        </strong>
+
+
+                        {% if item.required %}
+
+                            <span class="badge bg-danger ms-2">
+                                Required
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary ms-2">
+                                Optional
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- VERIFY CHECKBOX -->
+
+                    <div class="col-md-2">
+
+                        <div class="form-check">
+
+                            <input
+                                type="checkbox"
+                                class="form-check-input verification-checkbox ppe-checkbox"
+                                name="ppe_verified"
+                                value="{{ item.pk }}"
+                                id="ppe-{{ item.pk }}"
+                                {% if item.verified %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="ppe-{{ item.pk }}"
+                            >
+                                <span class="verification-label">
+                                    {% if item.verified %}
+                                        Verified
+                                    {% else %}
+                                        Not Verified
+                                    {% endif %}
+                                </span>
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REMARKS -->
+
+                    <div class="col-md-6">
+
+                        <input
+                            type="text"
+                            name="ppe_remarks_{{ item.pk }}"
+                            value="{{ item.remarks }}"
+                            class="form-control"
+                            placeholder="Remarks"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% empty %}
+
+                <p class="text-muted">
+                    No PPE configured for this permit.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- SAFETY CONTROLS -->
+    <!-- ========================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <span>
+                    Safety Control Verification
+                </span>
+
+                <span
+                    class="badge bg-light text-dark"
+                    id="control-progress"
+                >
+                    0 / 0 Verified
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% for item in permit.safety_controls.all %}
+
+            <div
+                class="verification-item border rounded p-3 mb-3"
+            >
+
+                <div class="row align-items-center">
+
+                    <!-- CONTROL NAME -->
+
+                    <div class="col-md-4">
+
+                        <strong>
+                            {{ item.safety_control.name }}
+                        </strong>
+
+
+                        {% if item.required %}
+
+                            <span class="badge bg-danger ms-2">
+                                Required
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary ms-2">
+                                Optional
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- VERIFY CHECKBOX -->
+
+                    <div class="col-md-2">
+
+                        <div class="form-check">
+
+                            <input
+                                type="checkbox"
+                                class="form-check-input verification-checkbox control-checkbox"
+                                name="control_verified"
+                                value="{{ item.pk }}"
+                                id="control-{{ item.pk }}"
+                                {% if item.verified %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="control-{{ item.pk }}"
+                            >
+                                <span class="verification-label">
+                                    {% if item.verified %}
+                                        Verified
+                                    {% else %}
+                                        Not Verified
+                                    {% endif %}
+                                </span>
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REMARKS -->
+
+                    <div class="col-md-6">
+
+                        <input
+                            type="text"
+                            name="control_remarks_{{ item.pk }}"
+                            value="{{ item.remarks }}"
+                            class="form-control"
+                            placeholder="Remarks"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% empty %}
+
+                <p class="text-muted">
+                    No safety controls configured.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- FINAL DECISION -->
+    <!-- ========================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-dark text-white">
+            Final Decision
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Safety Officer Remarks
+                </label>
+
+                {{ form.remarks }}
+
+            </div>
+
+
+            <!-- APPROVAL WARNING -->
+
+            <div
+                id="approval-warning"
+                class="alert alert-warning d-none"
+            >
+
+                <strong>
+                    Approval blocked.
+                </strong>
+
+                Please verify all required PPE and
+                safety controls before approving this permit.
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="d-flex gap-2">
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="REJECT"
+                    class="btn btn-danger"
+                    id="reject-button"
+                >
+                    Reject Permit
+                </button>
+
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="APPROVE"
+                    class="btn btn-success"
+                    id="approve-button"
+                >
+                    Approve & Submit
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+<!-- ========================================== -->
+<!-- STYLES -->
+<!-- ========================================== -->
+
+<style>
+
+.verification-item {
+    transition: all 0.2s ease;
+    background: #ffffff;
+}
+
+.verification-item:hover {
+    background: #f8f9fa;
+}
+
+.verification-item.verified {
+    border-color: #198754 !important;
+    background-color: #f0fff5;
+}
+
+.verification-checkbox {
+    width: 1.3rem;
+    height: 1.3rem;
+    cursor: pointer;
+}
+
+.verification-label {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+</style>
+
+
+<!-- ========================================== -->
+<!-- JAVASCRIPT -->
+<!-- ========================================== -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* --------------------------------------
+           Elements
+        -------------------------------------- */
+
+        const form =
+            document.getElementById(
+                "review-form"
+            );
+
+
+        const verifyAllButton =
+            document.getElementById(
+                "verify-all"
+            );
+
+
+        const approveButton =
+            document.getElementById(
+                "approve-button"
+            );
+
+
+        const rejectButton =
+            document.getElementById(
+                "reject-button"
+            );
+
+
+        const warning =
+            document.getElementById(
+                "approval-warning"
+            );
+
+
+        const ppeChecks =
+            Array.from(
+                document.querySelectorAll(
+                    ".ppe-checkbox"
+                )
+            );
+
+
+        const controlChecks =
+            Array.from(
+                document.querySelectorAll(
+                    ".control-checkbox"
+                )
+            );
+
+
+        const allChecks = [
+            ...ppeChecks,
+            ...controlChecks
+        ];
+
+
+        const ppeProgress =
+            document.getElementById(
+                "ppe-progress"
+            );
+
+
+        const controlProgress =
+            document.getElementById(
+                "control-progress"
+            );
+
+
+        /* --------------------------------------
+           Update individual item
+        -------------------------------------- */
+
+        function updateItem(
+            checkbox
+        ) {
+
+            const container =
+                checkbox.closest(
+                    ".verification-item"
+                );
+
+
+            const label =
+                container.querySelector(
+                    ".verification-label"
+                );
+
+
+            if (checkbox.checked) {
+
+                container.classList.add(
+                    "verified"
+                );
+
+                label.textContent =
+                    "Verified";
+
+            } else {
+
+                container.classList.remove(
+                    "verified"
+                );
+
+                label.textContent =
+                    "Not Verified";
+
+            }
+
+        }
+
+
+        /* --------------------------------------
+           Update progress
+        -------------------------------------- */
+
+        function updateProgress(
+            checks,
+            element
+        ) {
+
+            const verified =
+                checks.filter(
+                    function (checkbox) {
+                        return checkbox.checked;
+                    }
+                ).length;
+
+
+            element.textContent =
+                verified +
+                " / " +
+                checks.length +
+                " Verified";
+
+        }
+
+
+        /* --------------------------------------
+           Check required items
+        -------------------------------------- */
+
+        function getMissingRequired() {
+
+    const missing = [];
+
+    document
+        .querySelectorAll(
+            ".verification-item"
+        )
+        .forEach(
+            function (container) {
+
+                const checkbox =
+                    container.querySelector(
+                        ".verification-checkbox"
+                    );
+
+                /*
+                 * Required items have the
+                 * "required-item" class.
+                 */
+                if (
+                    container.classList.contains(
+                        "required-item"
+                    ) &&
+                    checkbox &&
+                    !checkbox.checked
+                ) {
+
+                    const name =
+                        container.querySelector(
+                            "strong"
+                        );
+
+                    if (name) {
+
+                        missing.push(
+                            name.textContent.trim()
+                        );
+
+                    }
+
+                }
+
+            }
+        );
+
+    return missing;
+}
+        /* --------------------------------------
+           Approval button state
+        -------------------------------------- */
+
+        function updateApprovalState() {
+
+            const missing =
+                getMissingRequired();
+
+
+            if (missing.length > 0) {
+
+                approveButton.disabled =
+                    true;
+
+                warning.classList.remove(
+                    "d-none"
+                );
+
+            } else {
+
+                approveButton.disabled =
+                    false;
+
+                warning.classList.add(
+                    "d-none"
+                );
+
+            }
+
+        }
+
+
+        /* --------------------------------------
+           Checkbox change
+        -------------------------------------- */
+
+        allChecks.forEach(
+            function (checkbox) {
+
+                checkbox.addEventListener(
+                    "change",
+                    function () {
+
+                        updateItem(
+                            checkbox
+                        );
+
+
+                        updateProgress(
+                            ppeChecks,
+                            ppeProgress
+                        );
+
+
+                        updateProgress(
+                            controlChecks,
+                            controlProgress
+                        );
+
+
+                        updateApprovalState();
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* --------------------------------------
+           VERIFY ALL
+        -------------------------------------- */
+
+        verifyAllButton.addEventListener(
+            "click",
+            function () {
+
+                /*
+                 * If anything is not verified,
+                 * Verify All will check everything.
+                 *
+                 * If everything is already checked,
+                 * clicking again will uncheck everything.
+                 */
+
+                const shouldVerify =
+                    allChecks.some(
+                        function (checkbox) {
+                            return !checkbox.checked;
+                        }
+                    );
+
+
+                allChecks.forEach(
+                    function (checkbox) {
+
+                        checkbox.checked =
+                            shouldVerify;
+
+                        updateItem(
+                            checkbox
+                        );
+
+                    }
+                );
+
+
+                updateProgress(
+                    ppeChecks,
+                    ppeProgress
+                );
+
+
+                updateProgress(
+                    controlChecks,
+                    controlProgress
+                );
+
+
+                updateApprovalState();
+
+
+                if (shouldVerify) {
+
+                    verifyAllButton.textContent =
+                        "✓ All Verified";
+
+                    verifyAllButton.classList.remove(
+                        "btn-outline-primary"
+                    );
+
+                    verifyAllButton.classList.add(
+                        "btn-success"
+                    );
+
+                } else {
+
+                    verifyAllButton.textContent =
+                        "✓ Verify All";
+
+                    verifyAllButton.classList.remove(
+                        "btn-success"
+                    );
+
+                    verifyAllButton.classList.add(
+                        "btn-outline-primary"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* --------------------------------------
+           Approve confirmation
+        -------------------------------------- */
+
+        approveButton.addEventListener(
+            "click",
+            function (event) {
+
+                const missing =
+                    getMissingRequired();
+
+
+                if (missing.length > 0) {
+
+                    event.preventDefault();
+
+                    warning.classList.remove(
+                        "d-none"
+                    );
+
+                    warning.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+
+                    return;
+
+                }
+
+
+                const confirmed =
+                    window.confirm(
+                        "Confirm approval of this permit? " +
+                        "All required safety items will be " +
+                        "recorded as verified."
+                    );
+
+
+                if (!confirmed) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+
+        /* --------------------------------------
+           Reject confirmation
+        -------------------------------------- */
+
+        rejectButton.addEventListener(
+            "click",
+            function (event) {
+
+                const confirmed =
+                    window.confirm(
+                        "Are you sure you want to reject this permit?"
+                    );
+
+
+                if (!confirmed) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+
+        /* --------------------------------------
+           Initial state
+        -------------------------------------- */
+
+        allChecks.forEach(
+            function (checkbox) {
+
+                updateItem(
+                    checkbox
+                );
+
+            }
+        );
+
+
+        updateProgress(
+            ppeChecks,
+            ppeProgress
+        );
+
+
+        updateProgress(
+            controlChecks,
+            controlProgress
+        );
+
+
+        updateApprovalState();
+
+    }
+);
+
+</script>
+
+{% endblock %}
+```

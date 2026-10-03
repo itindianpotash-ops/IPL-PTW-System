@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <h2>Permits</h2>
+
+    {% if user.role != "SAFETY" %}
+        <a href="{% url 'permit_create' %}" class="btn btn-primary">
+            + Create Permit
+        </a>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>Permit No.</th>
+                        <th>Type</th>
+                        <th>Location</th>
+                        <th>Requester</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for permit in permits %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ permit.permit_number }}</strong>
+                        </td>
+
+                        <td>
+                            {{ permit.permit_type.name }}
+                        </td>
+
+                        <td>
+                            {{ permit.location.name }}
+                        </td>
+
+                        <td>
+                            {{ permit.requester }}
+                        </td>
+
+                        <td>
+
+                            {% if permit.status == "APPROVED" %}
+                                <span class="badge bg-success">
+                                    Approved
+                                </span>
+
+                            {% elif permit.status == "REJECTED" %}
+                                <span class="badge bg-danger">
+                                    Rejected
+                                </span>
+
+                            {% elif permit.status == "SUBMITTED" or permit.status == "RESUBMITTED" %}
+                                <span class="badge bg-warning text-dark">
+                                    Awaiting Review
+                                </span>
+
+                            {% elif permit.status == "CLOSED" %}
+                                <span class="badge bg-secondary">
+                                    Closed
+                                </span>
+
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    {{ permit.get_status_display }}
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ permit.created_at|date:"d-m-Y H:i" }}
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{% url 'permit_detail' permit.pk %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                View
+                            </a>
+
+                            {% if user.role == "SAFETY" and permit.status == "SUBMITTED" or user.role == "SAFETY" and permit.status == "RESUBMITTED" %}
+
+                                <a
+                                    href="{% url 'permit_review' permit.pk %}"
+                                    class="btn btn-sm btn-warning"
+                                >
+                                    Review
+                                </a>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            No permits found.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

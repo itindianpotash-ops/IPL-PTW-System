@@ -1,0 +1,1103 @@
+{#{% extends "base.html" %}#}
+{##}
+{#{% block content %}#}
+{##}
+{#<h2>#}
+{#    {% if editing %}#}
+{#        Edit Permit#}
+{#    {% else %}#}
+{#        Create Permit#}
+{#    {% endif %}#}
+{#</h2>#}
+{##}
+{#<div class="card">#}
+{##}
+{#    <div class="card-body">#}
+{##}
+{#        <form method="post">#}
+{##}
+{#            {% csrf_token %}#}
+{##}
+{#            {% if form.errors %}#}
+{##}
+{#                <div class="alert alert-danger">#}
+{#                    Please correct the errors below.#}
+{#                </div>#}
+{##}
+{#            {% endif %}#}
+{##}
+{#            <div class="row">#}
+{##}
+{#                <div class="col-md-6 mb-3">#}
+{##}
+{#                    <label class="form-label">#}
+{#                        Permit Type#}
+{#                    </label>#}
+{##}
+{#                    {{ form.permit_type }}#}
+{##}
+{#                </div>#}
+{##}
+{##}
+{#                <div class="col-md-6 mb-3">#}
+{##}
+{#                    <label class="form-label">#}
+{#                        Location#}
+{#                    </label>#}
+{##}
+{#                    {{ form.location }}#}
+{##}
+{#                </div>#}
+{##}
+{#            </div>#}
+{##}
+{##}
+{#            <div class="mb-3">#}
+{##}
+{#                <label class="form-label">#}
+{#                    Work Description#}
+{#                </label>#}
+{##}
+{#                {{ form.work_description }}#}
+{##}
+{#            </div>#}
+{##}
+{##}
+{#            <div class="mb-3">#}
+{##}
+{#                <label class="form-label">#}
+{#                    Contractor#}
+{#                </label>#}
+{##}
+{#                {{ form.contractor_name }}#}
+{##}
+{#            </div>#}
+{##}
+{##}
+{#            <div class="mb-3">#}
+{##}
+{#                <label class="form-label">#}
+{#                    Workers#}
+{#                </label>#}
+{##}
+{#                {{ form.workers }}#}
+{##}
+{#            </div>#}
+{##}
+{##}
+{#            <div class="row">#}
+{##}
+{#                <div class="col-md-6 mb-3">#}
+{##}
+{#                    <label class="form-label">#}
+{#                        Work Start#}
+{#                    </label>#}
+{##}
+{#                    {{ form.work_start }}#}
+{##}
+{#                </div>#}
+{##}
+{##}
+{#                <div class="col-md-6 mb-3">#}
+{##}
+{#                    <label class="form-label">#}
+{#                        Work End#}
+{#                    </label>#}
+{##}
+{#                    {{ form.work_end }}#}
+{##}
+{#                </div>#}
+{##}
+{#            </div>#}
+{##}
+{##}
+{#            <button#}
+{#                type="submit"#}
+{#                class="btn btn-primary"#}
+{#            >#}
+{#                {% if editing %}#}
+{#                    Resubmit Permit#}
+{#                {% else %}#}
+{#                    Submit Permit#}
+{#                {% endif %}#}
+{#            </button>#}
+{##}
+{#        </form>#}
+{##}
+{#    </div>#}
+{##}
+{#</div>#}
+{##}
+{#{% endblock %}#}
+
+
+{% extends "base.html" %}
+
+{% block title %}
+    {% if editing %}
+        Edit Permit
+    {% else %}
+        Create Permit
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            {% if editing %}
+                Edit Permit
+            {% else %}
+                Create Permit
+            {% endif %}
+        </h2>
+
+        <p class="text-muted mb-0">
+            Complete the work details and review the automatically
+            loaded safety requirements.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'permit_list' %}"
+        class="btn btn-outline-secondary"
+    >
+        Back to Permits
+    </a>
+
+</div>
+
+
+<form method="post" id="permit-form">
+
+    {% csrf_token %}
+
+    {% if form.errors %}
+
+        <div class="alert alert-danger">
+
+            <strong>Please correct the following errors:</strong>
+
+            {{ form.non_field_errors }}
+
+            {% for field in form %}
+
+                {% for error in field.errors %}
+
+                    <div>
+                        <strong>{{ field.label }}:</strong>
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ========================================= -->
+    <!-- WORK DETAILS -->
+    <!-- ========================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+                1. Work Details
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.permit_type.id_for_label }}"
+                        class="form-label fw-bold"
+                    >
+                        Permit Type
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    {{ form.permit_type }}
+
+                    <div class="form-text">
+                        Select a permit type to load its PPE and
+                        safety controls.
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.location.id_for_label }}"
+                        class="form-label fw-bold"
+                    >
+                        Location
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    {{ form.location }}
+
+                </div>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label
+                    for="{{ form.work_description.id_for_label }}"
+                    class="form-label fw-bold"
+                >
+                    Work Description
+                    <span class="text-danger">*</span>
+                </label>
+
+                {{ form.work_description }}
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label
+                    for="{{ form.contractor_name.id_for_label }}"
+                    class="form-label fw-bold"
+                >
+                    Contractor
+                </label>
+
+                {{ form.contractor_name }}
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label
+                    for="{{ form.workers.id_for_label }}"
+                    class="form-label fw-bold"
+                >
+                    Workers
+                </label>
+
+                {{ form.workers }}
+
+                <div class="form-text">
+                    Enter one worker name per line.
+                </div>
+
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.work_start.id_for_label }}"
+                        class="form-label fw-bold"
+                    >
+                        Work Start
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    {{ form.work_start }}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.work_end.id_for_label }}"
+                        class="form-label fw-bold"
+                    >
+                        Work End
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    {{ form.work_end }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- REQUIREMENTS LOADING -->
+    <!-- ========================================= -->
+
+    <div
+        id="requirements-loading"
+        class="alert alert-info d-none"
+    >
+
+        <div class="d-flex align-items-center">
+
+            <div
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
+            ></div>
+
+            Loading safety requirements...
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- PERMIT TYPE INFORMATION -->
+    <!-- ========================================= -->
+
+    <div
+        id="permit-type-info"
+        class="card shadow-sm mb-4 d-none"
+    >
+
+        <div class="card-header bg-secondary text-white">
+
+            <h5 class="mb-0">
+                Permit Type Information
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <h5 id="permit-type-name"></h5>
+
+            <p
+                id="permit-type-description"
+                class="text-muted mb-0"
+            ></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- PPE -->
+    <!-- ========================================= -->
+
+    <div
+        id="ppe-section"
+        class="card shadow-sm mb-4 d-none"
+    >
+
+        <div class="card-header bg-warning">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    2. Required PPE / Safety Kits
+                </h5>
+
+                <span
+                    id="ppe-count"
+                    class="badge bg-dark"
+                >
+                    0
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div
+                id="no-ppe"
+                class="alert alert-light border d-none"
+            >
+                No PPE has been configured for this permit type.
+            </div>
+
+
+            <div
+                id="ppe-list"
+                class="row g-3"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- SAFETY CONTROLS -->
+    <!-- ========================================= -->
+
+    <div
+        id="controls-section"
+        class="card shadow-sm mb-4 d-none"
+    >
+
+        <div class="card-header bg-danger text-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    3. Safety Controls / Checklist
+                </h5>
+
+                <span
+                    id="control-count"
+                    class="badge bg-light text-dark"
+                >
+                    0
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div
+                id="no-controls"
+                class="alert alert-light border d-none"
+            >
+                No safety controls have been configured for this
+                permit type.
+            </div>
+
+
+            <div
+                id="controls-list"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- SUBMIT -->
+    <!-- ========================================= -->
+
+    <div class="card shadow-sm mb-5">
+
+        <div class="card-body">
+
+            <div class="alert alert-info">
+
+
+
+            </div>
+
+
+            <div class="d-flex justify-content-end gap-2">
+
+                <a
+                    href="{% url 'permit_list' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-lg"
+                >
+
+                    {% if editing %}
+                        Resubmit Permit
+                    {% else %}
+                        Submit Permit
+                    {% endif %}
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const permitTypeSelect =
+        document.getElementById(
+            "{{ form.permit_type.id_for_label }}"
+        );
+
+
+    const loading =
+        document.getElementById(
+            "requirements-loading"
+        );
+
+
+    const infoSection =
+        document.getElementById(
+            "permit-type-info"
+        );
+
+
+    const permitTypeName =
+        document.getElementById(
+            "permit-type-name"
+        );
+
+
+    const permitTypeDescription =
+        document.getElementById(
+            "permit-type-description"
+        );
+
+
+    const ppeSection =
+        document.getElementById(
+            "ppe-section"
+        );
+
+
+    const ppeList =
+        document.getElementById(
+            "ppe-list"
+        );
+
+
+    const noPpe =
+        document.getElementById(
+            "no-ppe"
+        );
+
+
+    const ppeCount =
+        document.getElementById(
+            "ppe-count"
+        );
+
+
+    const controlsSection =
+        document.getElementById(
+            "controls-section"
+        );
+
+
+    const controlsList =
+        document.getElementById(
+            "controls-list"
+        );
+
+
+    const noControls =
+        document.getElementById(
+            "no-controls"
+        );
+
+
+    const controlCount =
+        document.getElementById(
+            "control-count"
+        );
+
+
+    function resetRequirements() {
+
+        infoSection.classList.add("d-none");
+
+        ppeSection.classList.add("d-none");
+
+        controlsSection.classList.add("d-none");
+
+        ppeList.innerHTML = "";
+
+        controlsList.innerHTML = "";
+
+        noPpe.classList.add("d-none");
+
+        noControls.classList.add("d-none");
+
+        ppeCount.textContent = "0";
+
+        controlCount.textContent = "0";
+
+    }
+
+
+    function createPpeCard(item) {
+
+        const col =
+            document.createElement("div");
+
+        col.className =
+            "col-md-6 col-lg-4";
+
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "card h-100 border";
+
+
+        const body =
+            document.createElement("div");
+
+        body.className =
+            "card-body";
+
+
+        const titleRow =
+            document.createElement("div");
+
+        titleRow.className =
+            "d-flex justify-content-between align-items-start";
+
+
+        const title =
+            document.createElement("h6");
+
+        title.className =
+            "card-title mb-2";
+
+        title.textContent =
+            item.name;
+
+
+        const badge =
+            document.createElement("span");
+
+        if (item.required) {
+
+            badge.className =
+                "badge bg-danger";
+
+            badge.textContent =
+                "REQUIRED";
+
+        } else {
+
+            badge.className =
+                "badge bg-secondary";
+
+            badge.textContent =
+                "OPTIONAL";
+
+        }
+
+
+        titleRow.appendChild(title);
+
+        titleRow.appendChild(badge);
+
+
+        body.appendChild(titleRow);
+
+
+        const code =
+            document.createElement("small");
+
+        code.className =
+            "text-muted d-block mb-2";
+
+        code.textContent =
+            "Code: " + item.code;
+
+
+        body.appendChild(code);
+
+
+        if (item.description) {
+
+            const description =
+                document.createElement("p");
+
+            description.className =
+                "card-text small";
+
+            description.textContent =
+                item.description;
+
+            body.appendChild(description);
+
+        }
+
+
+        const status =
+            document.createElement("div");
+
+        status.className =
+            "mt-2";
+
+
+        const statusBadge =
+            document.createElement("span");
+
+        statusBadge.className =
+            "badge bg-light text-dark border";
+
+        statusBadge.textContent =
+            "Safety Officer verification required";
+
+
+        status.appendChild(statusBadge);
+
+        body.appendChild(status);
+
+
+        card.appendChild(body);
+
+        col.appendChild(card);
+
+
+        return col;
+
+    }
+
+
+    function createControlRow(item, index) {
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className =
+            "border rounded p-3 mb-3";
+
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "row align-items-center";
+
+
+        const numberCol =
+            document.createElement("div");
+
+        numberCol.className =
+            "col-auto";
+
+
+        const number =
+            document.createElement("span");
+
+        number.className =
+            "badge bg-danger rounded-pill";
+
+        number.textContent =
+            index + 1;
+
+
+        numberCol.appendChild(number);
+
+
+        const textCol =
+            document.createElement("div");
+
+        textCol.className =
+            "col";
+
+
+        const title =
+            document.createElement("div");
+
+        title.className =
+            "fw-bold";
+
+
+        title.textContent =
+            item.name;
+
+
+        textCol.appendChild(title);
+
+
+        if (item.description) {
+
+            const description =
+                document.createElement("div");
+
+            description.className =
+                "text-muted small mt-1";
+
+            description.textContent =
+                item.description;
+
+            textCol.appendChild(description);
+
+        }
+
+
+        const badge =
+            document.createElement("span");
+
+        badge.className =
+            item.required
+                ? "badge bg-danger ms-2"
+                : "badge bg-secondary ms-2";
+
+
+        badge.textContent =
+            item.required
+                ? "REQUIRED"
+                : "OPTIONAL";
+
+
+        title.appendChild(badge);
+
+
+        const statusCol =
+            document.createElement("div");
+
+        statusCol.className =
+            "col-md-3 text-md-end mt-2 mt-md-0";
+
+
+        const status =
+            document.createElement("span");
+
+        status.className =
+            "badge bg-light text-dark border";
+
+
+        status.textContent =
+            "Pending verification";
+
+
+        statusCol.appendChild(status);
+
+
+        row.appendChild(numberCol);
+
+        row.appendChild(textCol);
+
+        row.appendChild(statusCol);
+
+
+        wrapper.appendChild(row);
+
+
+        return wrapper;
+
+    }
+
+
+    async function loadConfiguration(permitTypeId) {
+
+        resetRequirements();
+
+
+        if (!permitTypeId) {
+            return;
+        }
+
+
+        loading.classList.remove("d-none");
+
+
+        try {
+
+            const url =
+                "{% url 'permit_type_configuration' 0 %}"
+                .replace(
+                    "/0/",
+                    "/" + permitTypeId + "/"
+                );
+
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        headers: {
+                            "X-Requested-With":
+                                "XMLHttpRequest"
+                        }
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load configuration."
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            /*
+             * Permit type information
+             */
+
+            permitTypeName.textContent =
+                data.permit_type.code +
+                " - " +
+                data.permit_type.name;
+
+
+            permitTypeDescription.textContent =
+                data.permit_type.description ||
+                "No description available.";
+
+
+            infoSection.classList.remove(
+                "d-none"
+            );
+
+
+            /*
+             * PPE
+             */
+
+            ppeSection.classList.remove(
+                "d-none"
+            );
+
+
+            ppeCount.textContent =
+                data.ppe.length;
+
+
+            if (data.ppe.length === 0) {
+
+                noPpe.classList.remove(
+                    "d-none"
+                );
+
+            } else {
+
+                data.ppe.forEach(
+                    function (item) {
+
+                        ppeList.appendChild(
+                            createPpeCard(item)
+                        );
+
+                    }
+                );
+
+            }
+
+
+            /*
+             * Safety Controls
+             */
+
+            controlsSection.classList.remove(
+                "d-none"
+            );
+
+
+            controlCount.textContent =
+                data.safety_controls.length;
+
+
+            if (
+                data.safety_controls.length === 0
+            ) {
+
+                noControls.classList.remove(
+                    "d-none"
+                );
+
+            } else {
+
+                data.safety_controls.forEach(
+                    function (item, index) {
+
+                        controlsList.appendChild(
+                            createControlRow(
+                                item,
+                                index
+                            )
+                        );
+
+                    }
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            const errorBox =
+                document.createElement("div");
+
+            errorBox.className =
+                "alert alert-danger";
+
+            errorBox.textContent =
+                "Unable to load PPE and safety controls. Please refresh the page and try again.";
+
+
+            permitTypeSelect
+                .closest(".mb-3")
+                .appendChild(errorBox);
+
+        } finally {
+
+            loading.classList.add(
+                "d-none"
+            );
+
+        }
+
+    }
+
+
+    permitTypeSelect.addEventListener(
+        "change",
+        function () {
+
+            loadConfiguration(
+                this.value
+            );
+
+        }
+    );
+
+
+    /*
+     * Load automatically when editing
+     * an existing permit.
+     */
+
+    if (permitTypeSelect.value) {
+
+        loadConfiguration(
+            permitTypeSelect.value
+        );
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

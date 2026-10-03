@@ -1,0 +1,32 @@
+body {
+    background-color: #f4f6f9;
+}
+
+.navbar {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.card {
+    border: none;
+}
+
+.dashboard-card {
+    transition: transform 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+}
+
+.table th {
+    white-space: nowrap;
+}
+
+.badge {
+    font-size: 0.8rem;
+}
+
+pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+}
